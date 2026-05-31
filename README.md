@@ -139,7 +139,7 @@ Expected output:
 # Clone Repository
 
 ```bash
-git clone https://github.com/PranikNikose/button-roulette.git
+git clone <repository-url>
 cd roulette
 ```
 
