@@ -3,6 +3,10 @@ pipeline {
 
     stages {
 
+		tools {
+			maven 'Maven-3.9.11'
+		}
+	
         stage('Checkout') {
             steps {
                 git branch: 'button-roulette-Pranik',
