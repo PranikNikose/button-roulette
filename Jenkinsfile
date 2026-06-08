@@ -5,7 +5,8 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/PranikNikose/button-roulette.git'
+                git branch: 'button-roulette-Pranik',
+                    url: 'https://github.com/PranikNikose/button-roulette.git'
             }
         }
 
