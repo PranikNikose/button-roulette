@@ -13,6 +13,7 @@ pipeline {
 				bat 'java -version'
 				bat 'javac -version'
 				bat 'mvn -version'
+				bat 'docker --version'
 			}
 		}
 	
@@ -42,13 +43,17 @@ pipeline {
 		
 		stage('Build Backend Docker') {
 			steps {
-				bat 'docker build -t roulette-backend ./roulette-backend'
+				dir('roulette-backend') {
+					bat 'docker build -t roulette-backend:latest .'
+				}
 			}
 		}
 
 		stage('Build Frontend Docker') {
 			steps {
-				bat 'docker build -t roulette-frontend ./roulette-frontend'
+				dir('roulette-frontend') {
+					bat 'docker build -t roulette-frontend:latest .'
+				}
 			}
 		}
 		
