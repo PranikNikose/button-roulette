@@ -1,6 +1,14 @@
 pipeline {
     agent any
 
+stage('Environment Check') {
+    steps {
+        bat 'java -version'
+        bat 'javac -version'
+        bat 'mvn -version'
+    }
+}
+
 	tools {
 			maven 'Maven-3.9.11'
 		}
