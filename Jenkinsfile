@@ -39,5 +39,19 @@ pipeline {
                 }
             }
         }
+		
+		stage('Build Backend Docker') {
+			steps {
+				bat 'docker build -t roulette-backend ./roulette-backend'
+			}
+		}
+
+		stage('Build Frontend Docker') {
+			steps {
+				bat 'docker build -t roulette-frontend ./roulette-frontend'
+			}
+		}
+		
+		
     }
 }
