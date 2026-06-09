@@ -6,6 +6,6 @@ public class FireBall implements Spell {
 
 	@Override
 	public String execute() {
-		return "Your code compiles only because Java feels sorry for you.";
+		return "Code Fails. Developer Needed.";
 	}
 }
