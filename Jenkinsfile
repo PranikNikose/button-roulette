@@ -120,7 +120,11 @@ pipeline {
 							configName: 'button-roulette-ec2',
 							transfers: [
 								sshTransfer(
-									execCommand: 'hostname'
+									execCommand: '''
+										cd /home/ec2-user/button-roulette
+										pwd
+										ls -l
+									'''
 								)
 							]
 						)
