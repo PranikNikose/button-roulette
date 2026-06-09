@@ -149,6 +149,7 @@ pipeline {
 							transfers: [
 								sshTransfer(
 									sourceFiles: 'deployment/docker-compose.yml',
+									removePrefix: 'deployment',
 									remoteDirectory: 'button-roulette'
 								)
 							]
