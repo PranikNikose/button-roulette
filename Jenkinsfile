@@ -133,11 +133,24 @@ pipeline {
 			}
 		}
 		
-		stage('Deploy') {
+		stage('Deploy to EC2') {
 			steps {
-				bat 'docker compose -f docker-compose-deploy.yml down'
-				bat 'docker compose -f docker-compose-deploy.yml pull'
-				bat 'docker compose -f docker-compose-deploy.yml up -d'
+				sshPublisher(
+					publishers: [
+						sshPublisherDesc(
+							configName: 'button-roulette-ec2',
+							transfers: [
+								sshTransfer(
+									execCommand: '''
+									cd /home/ec2-user/button-roulette
+									docker compose pull
+									docker compose up -d
+									'''
+								)
+							]
+						)
+					]
+				)
 			}
 		}
 		
