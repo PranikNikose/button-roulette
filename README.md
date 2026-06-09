@@ -1,57 +1,139 @@
-# 🎰 Button Roulette
+# 🎰 Button Roulette – Complete Java + DevOps Lifecycle Project
 
-Button Roulette is a simple full-stack application built using Spring Boot and React.
+## 📖 Project Overview
 
-When the user clicks the **🎰 CLICK ME** button, the frontend calls a Spring Boot REST API. The backend randomly selects a spell using Java Reflection and returns a fun response.
+Button Roulette is a Full Stack Java application built to demonstrate an end-to-end DevOps lifecycle.
+
+The project starts with a simple Spring Boot backend and React frontend and gradually evolves through modern DevOps practices including:
+
+* Git & GitHub
+* Branching Strategy
+* Maven Build Automation
+* Docker
+* Docker Compose
+* Jenkins CI Pipeline
+* Docker Hub Registry
+* Automated Deployment (Upcoming)
+* Kubernetes (Upcoming)
+* Monitoring & Logging (Upcoming)
+
+This repository is designed for:
+
+* Java Developers
+* DevOps Engineers
+* Students
+* Freshers
+* Interview Preparation
+* CI/CD Learning
+* Docker & Kubernetes Practice
 
 ---
 
-# Features
+# 🎯 Project Objective
+
+The primary objective of this project is to learn and implement the complete DevOps lifecycle from source code management to container orchestration.
+
+Instead of learning tools individually, this project demonstrates how each tool fits into a real-world software delivery pipeline.
+
+---
+
+# 🏗 Application Architecture
+
+```text
+User
+ │
+ ▼
+React Frontend
+ │
+ ▼
+Spring Boot REST API
+ │
+ ▼
+Spell Engine
+ │
+ ▼
+Java Reflection
+ │
+ ▼
+Random Spell Generator
+```
+
+---
+
+# 🔄 Complete DevOps Lifecycle
+
+```text
+Developer
+    │
+    ▼
+GitHub Repository
+    │
+    ▼
+Feature Branch
+    │
+    ▼
+Pull Request
+    │
+    ▼
+Development Branch
+    │
+    ▼
+Jenkins Pipeline
+    │
+    ├── Build Backend
+    │
+    ├── Build Frontend
+    │
+    ├── Create Docker Images
+    │
+    └── Push Images
+    │
+    ▼
+Docker Hub
+    │
+    ▼
+Deployment
+    │
+    ▼
+Kubernetes (Future)
+```
+
+---
+
+# 🚀 Features
+
+## Backend Features
 
 * Spring Boot REST API
-* React Frontend
-* Java Reflection (`Class.forName`)
-* Random Spell Engine
-* Environment-based configuration
-* CORS Support
-* No Database
-* No JPA
-* No Lombok
-* Pure In-Memory Application
+* Java Reflection Based Processing
+* Random Spell Generator
+* Environment Variable Support
+* Configurable Port
+* Configurable CORS
+* No Database Dependency
+* Lightweight Architecture
+
+## Frontend Features
+
+* React Single Page Application
+* API Integration
+* Spell History Tracking
+* Responsive UI
+* Environment Variable Configuration
+
+## DevOps Features
+
+* Git Source Control
+* GitHub Repository Management
+* Branching Strategy
+* Dockerized Applications
+* Docker Compose
+* Jenkins CI Pipeline
+* Docker Hub Integration
 
 ---
 
-# Project Structure
-
-```text
-roulette/
-├── roulette-backend/
-└── roulette-frontend/
-```
-
-Backend:
-
-```text
-roulette-backend/
-├── src/
-├── pom.xml
-└── application.properties
-```
-
-Frontend:
-
-```text
-roulette-frontend/
-├── src/
-├── public/
-├── package.json
-├── .env
-└── .env.example
-```
-
----
-
-# Technology Stack
+# 🛠 Technology Stack
 
 ## Backend
 
@@ -66,13 +148,49 @@ roulette-frontend/
 * HTML
 * CSS
 
+## DevOps
+
+* Git
+* GitHub
+* Jenkins
+* Docker
+* Docker Compose
+* Docker Hub
+
 ---
 
-# Prerequisites
+# 📂 Repository Structure
 
-Install the following software before running the application.
+```text
+button-roulette/
+│
+├── roulette-backend/
+│   ├── src/
+│   ├── pom.xml
+│   ├── Dockerfile
+│   └── application.properties
+│
+├── roulette-frontend/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   ├── Dockerfile
+│   └── .env.example
+│
+├── docker-compose.yml
+├── Jenkinsfile
+├── README.md
+│
+└── docs/
+```
 
-## 1. Java 21
+---
+
+# 📋 Prerequisites
+
+Install the following software before starting.
+
+## Java 21
 
 Verify installation:
 
@@ -80,15 +198,15 @@ Verify installation:
 java -version
 ```
 
-Expected output:
+Expected:
 
 ```text
-openjdk version "21"
+Java 21
 ```
 
 ---
 
-## 2. Maven
+## Maven
 
 Verify installation:
 
@@ -96,7 +214,7 @@ Verify installation:
 mvn -version
 ```
 
-Expected output:
+Expected:
 
 ```text
 Apache Maven 3.x
@@ -104,7 +222,7 @@ Apache Maven 3.x
 
 ---
 
-## 3. Node.js
+## Node.js
 
 Verify installation:
 
@@ -112,15 +230,15 @@ Verify installation:
 node -v
 ```
 
-Expected output:
+Expected:
 
 ```text
-v20.x.x
+v20+
 ```
 
 ---
 
-## 4. npm
+## npm
 
 Verify installation:
 
@@ -128,39 +246,98 @@ Verify installation:
 npm -v
 ```
 
-Expected output:
+---
 
-```text
-10.x.x
+## Docker
+
+Verify installation:
+
+```bash
+docker --version
 ```
 
 ---
 
-# Clone Repository
+## Git
+
+Verify installation:
 
 ```bash
-git clone <repository-url>
-cd roulette
+git --version
+```
+
+---
+
+# 🌿 Branching Strategy
+
+This project follows a simplified enterprise branching model.
+
+```text
+main (Production)
+│
+├── stqa (QA / UAT)
+│
+├── dev (Development)
+│
+└── feature/*
+```
+
+## Branch Purpose
+
+| Branch    | Purpose                  |
+| --------- | ------------------------ |
+| feature/* | Developer Working Branch |
+| dev       | Integration Branch       |
+| stqa      | QA / Testing Branch      |
+| main      | Production Branch        |
+
+---
+
+## Current Development Branch
+
+```text
+button-roulette-Pranik
+```
+
+---
+
+## Create Feature Branch
+
+```bash
+git checkout -b feature/YourName
 ```
 
 Example:
 
 ```bash
+git checkout -b feature/Raju
+```
+
+Push:
+
+```bash
+git push -u origin feature/Raju
+```
+
+---
+
+# 📥 Clone Repository
+
+```bash
 git clone https://github.com/PranikNikose/button-roulette.git
+
 cd button-roulette
 ```
 
 ---
 
-# Backend Configuration
+# ⚙ Backend Configuration
 
 File:
 
 ```text
 roulette-backend/src/main/resources/application.properties
 ```
-
-Current configuration:
 
 ```properties
 spring.application.name=roulette-backend
@@ -170,7 +347,7 @@ server.port=${SERVER_PORT:8888}
 frontend.url=${FRONTEND_URL:http://localhost:3000}
 ```
 
-Default backend URL:
+Default Backend URL:
 
 ```text
 http://localhost:8888
@@ -178,11 +355,9 @@ http://localhost:8888
 
 ---
 
-# Frontend Configuration
+# ⚙ Frontend Configuration
 
-Create a local environment file.
-
-File:
+Create:
 
 ```text
 roulette-frontend/.env
@@ -194,97 +369,37 @@ Contents:
 REACT_APP_API_URL=http://localhost:8888
 ```
 
-A sample file is already provided:
-
-```text
-roulette-frontend/.env.example
-```
-
-Copy:
-
-```bash
-cp .env.example .env
-```
-
-Windows:
-
-```cmd
-copy .env.example .env
-```
-
 ---
 
-# Running the Backend
-
-Open a terminal.
-
-Navigate to backend folder:
+# ▶ Running Backend
 
 ```bash
 cd roulette-backend
-```
 
-Build:
-
-```bash
 mvn clean install
-```
 
-Start application:
-
-```bash
 mvn spring-boot:run
 ```
 
-Expected log:
-
-```text
-Tomcat started on port(s): 8888
-```
-
 Verify:
-
-Open browser:
 
 ```text
 http://localhost:8888/api/cast
 ```
 
-Sample response:
-
-```json
-{
-  "spellName": "Thunder",
-  "emoji": "⚡",
-  "result": "Done beats perfect."
-}
-```
-
 ---
 
-# Running the Frontend
-
-Open another terminal.
-
-Navigate to frontend folder:
+# ▶ Running Frontend
 
 ```bash
 cd roulette-frontend
-```
 
-Install dependencies:
-
-```bash
 npm install
-```
 
-Start React application:
-
-```bash
 npm start
 ```
 
-Application opens at:
+Verify:
 
 ```text
 http://localhost:3000
@@ -292,62 +407,556 @@ http://localhost:3000
 
 ---
 
-# Application Flow
+# 🔁 Application Flow
 
 ```text
 User Clicks Button
-        ↓
+       │
+       ▼
 React Frontend
-        ↓
-Fetch API Call
-        ↓
-Spring Boot REST API
-        ↓
+       │
+       ▼
+REST API Call
+       │
+       ▼
+Spring Boot Backend
+       │
+       ▼
 Spell Engine
-        ↓
+       │
+       ▼
 Java Reflection
-        ↓
+       │
+       ▼
 Random Spell
-        ↓
+       │
+       ▼
 JSON Response
-        ↓
-React UI Update
+       │
+       ▼
+UI Updated
+```
+
+# 📦 Phase 1 – Source Code Management (Git & GitHub)
+
+## Objective
+
+Manage application source code using Git and GitHub.
+
+## Activities Performed
+
+* Created GitHub Repository
+* Cloned Repository
+* Created Development Branch
+* Created Feature Branches
+* Committed Source Code
+* Pushed Changes to GitHub
+* Managed Code Promotion
+
+## Repository
+
+```text
+button-roulette
+```
+
+## Git Workflow
+
+```text
+Developer
+   │
+   ▼
+feature/username
+   │
+   ▼
+Pull Request
+   │
+   ▼
+dev
+   │
+   ▼
+stqa
+   │
+   ▼
+main
+```
+
+## Common Commands
+
+Clone Repository
+
+```bash
+git clone https://github.com/PranikNikose/button-roulette.git
+```
+
+Check Branch
+
+```bash
+git branch
+```
+
+Create Branch
+
+```bash
+git checkout -b feature/YourName
+```
+
+Stage Changes
+
+```bash
+git add .
+```
+
+Commit Changes
+
+```bash
+git commit -m "Added new feature"
+```
+
+Push Changes
+
+```bash
+git push origin feature/YourName
+```
+
+## Outcome
+
+```text
+Source Code Successfully Version Controlled
 ```
 
 ---
 
-# Environment Variables
+# 🔨 Phase 2 – Build Automation
 
-## Backend
+## Objective
 
-| Variable     | Default Value         | Description             |
-| ------------ | --------------------- | ----------------------- |
-| SERVER_PORT  | 8888                  | Spring Boot server port |
-| FRONTEND_URL | http://localhost:3000 | Allowed CORS origin     |
+Automate Backend and Frontend Builds.
+
+## Backend Build
+
+Navigate to backend:
+
+```bash
+cd roulette-backend
+```
+
+Build Project:
+
+```bash
+mvn clean package
+```
+
+Generated Artifact:
+
+```text
+target/*.jar
+```
+
+Run Application:
+
+```bash
+mvn spring-boot:run
+```
+
+---
+
+## Frontend Build
+
+Navigate to frontend:
+
+```bash
+cd roulette-frontend
+```
+
+Install Dependencies:
+
+```bash
+npm install
+```
+
+Create Production Build:
+
+```bash
+npm run build
+```
+
+Generated Artifact:
+
+```text
+build/
+```
+
+## Outcome
+
+```text
+Application Build Process Automated
+```
+
+---
+
+# 🐳 Phase 3 – Dockerization
+
+## Objective
+
+Containerize Backend and Frontend Applications.
+
+---
+
+## Backend Dockerfile
+
+```dockerfile
+FROM eclipse-temurin:21-jdk
+
+WORKDIR /app
+
+COPY target/*.jar app.jar
+
+EXPOSE 8888
+
+ENTRYPOINT ["java","-jar","app.jar"]
+```
+
+---
+
+## Frontend Dockerfile
+
+Frontend uses:
+
+* Node.js Build Stage
+* Nginx Runtime Stage
+
+Benefits:
+
+* Smaller Image Size
+* Faster Startup
+* Production Ready
+
+---
+
+## Build Backend Image
+
+```bash
+docker build -t roulette-backend .
+```
+
+---
+
+## Build Frontend Image
+
+```bash
+docker build -t roulette-frontend .
+```
+
+---
+
+## Verify Images
+
+```bash
+docker images
+```
+
+Expected:
+
+```text
+roulette-backend
+roulette-frontend
+```
+
+## Outcome
+
+```text
+Application Successfully Containerized
+```
+
+---
+
+# 🐳 Phase 4 – Docker Compose
+
+## Objective
+
+Run Entire Application Stack Using Single Command.
+
+---
+
+## Docker Compose Components
+
+```text
+Frontend Container
+Backend Container
+Docker Network
+```
+
+---
+
+## Build Containers
+
+```bash
+docker compose build
+```
+
+---
+
+## Start Containers
+
+```bash
+docker compose up
+```
+
+Detached Mode
+
+```bash
+docker compose up -d
+```
+
+---
+
+## Verify Containers
+
+```bash
+docker ps
+```
+
+---
+
+## Stop Containers
+
+```bash
+docker compose down
+```
+
+---
+
+## Outcome
+
+```text
+Multi Container Application Running Successfully
+```
+
+---
+
+# ⚙️ Phase 5 – Jenkins Continuous Integration
+
+## Objective
+
+Automate Build Process Whenever Code Changes.
+
+---
+
+## Jenkins Setup
+
+Completed:
+
+```text
+Jenkins Installation
+Pipeline Creation
+GitHub Integration
+Maven Configuration
+Java Configuration
+Docker Integration
+```
+
+---
+
+## Jenkins Pipeline Flow
+
+```text
+Checkout Source Code
+        │
+        ▼
+Build Backend
+        │
+        ▼
+Build Frontend
+        │
+        ▼
+Create Backend Docker Image
+        │
+        ▼
+Create Frontend Docker Image
+        │
+        ▼
+Push Images to Docker Hub
+```
+
+---
+
+## Pipeline Stages
+
+```text
+Stage 1 : Checkout
+
+Stage 2 : Build Backend
+
+Stage 3 : Build Frontend
+
+Stage 4 : Build Backend Docker Image
+
+Stage 5 : Build Frontend Docker Image
+
+Stage 6 : Push Backend Docker Image
+
+Stage 7 : Push Frontend Docker Image
+```
+
+---
+
+## Outcome
+
+```text
+CI Pipeline Successfully Implemented
+```
+
+---
+
+# ☁️ Phase 6 – Docker Hub Registry
+
+## Objective
+
+Store Docker Images Centrally.
+
+---
+
+## Workflow
+
+```text
+Jenkins
+   │
+   ▼
+Docker Build
+   │
+   ▼
+Docker Push
+   │
+   ▼
+Docker Hub
+```
+
+---
+
+## Verify Image Availability
+
+```bash
+docker pull <dockerhub-username>/<image-name>
+```
 
 Example:
 
 ```bash
-export SERVER_PORT=9090
-export FRONTEND_URL=http://localhost:3001
-```
-
-Windows CMD:
-
-```cmd
-set SERVER_PORT=9090
-set FRONTEND_URL=http://localhost:3001
+docker pull praniknikose/roulette-backend
 ```
 
 ---
 
-## Frontend
+## Outcome
 
-| Variable          | Description          |
-| ----------------- | -------------------- |
-| REACT_APP_API_URL | Backend API Base URL |
+```text
+Images Available For Deployment Anywhere
+```
 
-Example:
+---
+
+# 🚧 Real Issues Faced During Development
+
+## Issue 1 – Java Version Error
+
+Error:
+
+```text
+release version 21 not supported
+```
+
+Root Cause:
+
+```text
+Jenkins was using older JDK.
+```
+
+Solution:
+
+```text
+Installed Java 21.
+Configured Java 21 in Jenkins Global Tools.
+Updated JAVA_HOME.
+```
+
+---
+
+## Issue 2 – Maven Not Found
+
+Error:
+
+```text
+'mvn' is not recognized
+```
+
+Root Cause:
+
+```text
+Maven not configured in Jenkins.
+```
+
+Solution:
+
+```text
+Installed Maven.
+Configured Maven in Jenkins Global Tool Configuration.
+Updated PATH Variable.
+```
+
+---
+
+## Issue 3 – Docker Build Failure
+
+Error:
+
+```text
+COPY target/*.jar app.jar
+
+lstat /target: no such file or directory
+```
+
+Root Cause:
+
+```text
+target folder excluded in .dockerignore
+```
+
+Incorrect:
+
+```text
+target
+.git
+```
+
+Correct:
+
+```text
+.git
+```
+
+Solution:
+
+```text
+Removed target entry from .dockerignore.
+```
+
+---
+
+## Issue 4 – React API Error
+
+Error:
+
+```text
+Unexpected token '<'
+```
+
+Root Cause:
+
+```text
+Incorrect API URL.
+```
+
+Solution:
 
 ```env
 REACT_APP_API_URL=http://localhost:8888
@@ -355,92 +964,199 @@ REACT_APP_API_URL=http://localhost:8888
 
 ---
 
-# Available Spells
+## Issue 5 – Docker Hub Authentication Error
 
-| Spell      | Description               |
-| ---------- | ------------------------- |
-| FireBall   | Funny developer roast     |
-| FreezeTime | Current server timestamp  |
-| Confuse    | Reversed random sentence  |
-| Thunder    | Random motivational quote |
-| Potion     | Random fun fact           |
-
----
-
-# Development Commands
-
-## Backend
-
-Build:
-
-```bash
-mvn clean install
-```
-
-Run:
-
-```bash
-mvn spring-boot:run
-```
-
-Package:
-
-```bash
-mvn clean package
-```
-
----
-
-## Frontend
-
-Install:
-
-```bash
-npm install
-```
-
-Run:
-
-```bash
-npm start
-```
-
-Build:
-
-```bash
-npm run build
-```
-
----
-
-# Git Ignore
-
-The following files should not be committed:
+Error:
 
 ```text
-roulette-backend/target/
-roulette-frontend/node_modules/
-roulette-frontend/build/
-roulette-frontend/.env
-.idea/
-.vscode/
+push access denied
+
+insufficient_scope
+```
+
+Root Cause:
+
+```text
+Docker Hub authentication failure.
+```
+
+Solution:
+
+```bash
+docker login
+```
+
+Also verified:
+
+```text
+Repository Name
+Image Tag
+Docker Credentials
 ```
 
 ---
 
-# Future Enhancements
+# 📈 Project Journey
 
-* Docker Support
-* Docker Compose
-* GitHub Actions CI/CD
-* Automated Testing
-* AWS Deployment
-* Kubernetes Deployment
+## Day 1
+
+✅ Spring Boot Backend Created
+
+## Day 2
+
+✅ React Frontend Created
+
+✅ Backend API Integration Completed
+
+## Day 3
+
+✅ Backend Dockerized
+
+## Day 4
+
+✅ Frontend Dockerized
+
+## Day 5
+
+✅ Docker Compose Setup
+
+## Day 6
+
+✅ Jenkins Installation
+
+✅ Jenkins Pipeline Creation
+
+## Day 7
+
+✅ Docker Build Automation
+
+## Day 8
+
+✅ Docker Hub Integration
 
 ---
 
-# Author
+# ✅ Branch Completion Summary
+
+Branch:
+
+```text
+button-roulette-Pranik
+```
+
+Completed:
+
+```text
+✅ Spring Boot Backend
+✅ React Frontend
+✅ API Integration
+✅ Environment Variables
+✅ Backend Dockerfile
+✅ Frontend Dockerfile
+✅ Docker Compose
+✅ Jenkins Pipeline
+✅ Docker Build Automation
+✅ Docker Hub Push Automation
+```
+
+Verified:
+
+```text
+✅ Backend Running
+✅ Frontend Running
+✅ Docker Containers Running
+✅ Jenkins Build Successful
+✅ Images Available In Docker Hub
+```
+
+---
+
+# 📊 Current Project Status
+
+```text
+GitHub Repository              ✅
+Branching Strategy             ✅
+Backend Development            ✅
+Frontend Development           ✅
+Docker Backend                 ✅
+Docker Frontend                ✅
+Docker Compose                 ✅
+Jenkins CI                     ✅
+Docker Hub                     ✅
+
+Automated Deployment           ⏳
+AWS Deployment                 ⏳
+Kubernetes                     ⏳
+Monitoring                     ⏳
+```
+
+---
+
+# 🗺 Future Roadmap
+
+## Phase 7 – Automated Deployment
+
+Planned:
+
+* Jenkins Deployment Pipeline
+* Docker Compose Deployment
+* EC2 Deployment
+
+---
+
+## Phase 8 – Kubernetes
+
+Planned Components:
+
+* Deployment
+* Service
+* ConfigMap
+* Secret
+* Ingress
+
+---
+
+## Phase 9 – Monitoring & Logging
+
+Planned Tools:
+
+* Prometheus
+* Grafana
+* ELK Stack
+* Loki
+
+---
+
+# 🎓 Learning Outcomes
+
+By completing this project, you will learn:
+
+* Java Development
+* Spring Boot
+* REST APIs
+* React
+* Git & GitHub
+* Branching Strategy
+* Maven
+* Docker
+* Docker Compose
+* Jenkins
+* Docker Hub
+* CI/CD Fundamentals
+* DevOps Lifecycle
+* Containerization Concepts
+* Deployment Fundamentals
+
+---
+
+# 👨‍💻 Author
 
 Pranik Nikose
 
 Java Developer | DevOps Engineer
+
+---
+
+# ⭐ Support
+
+If this project helped you understand Java, Docker, Jenkins, or DevOps concepts, consider giving the repository a star and using it as a reference for your own DevOps learning journey.
