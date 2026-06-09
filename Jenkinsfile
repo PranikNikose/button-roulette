@@ -114,17 +114,11 @@ pipeline {
 		
 		stage('Test EC2 SSH Connection') {
 			steps {
-				withCredentials([
-					sshUserPrivateKey(
-						credentialsId: 'ec2-ssh-key',
-						keyFileVariable: 'SSH_KEY',
-						usernameVariable: 'SSH_USER'
-					)
-				]) {
-					bat '''
-					ssh -o StrictHostKeyChecking=no -i "%SSH_KEY%" %SSH_USER%@13.61.104.52 "hostname"
-					'''
-				}
+				bat '''
+				ssh -o StrictHostKeyChecking=no ^
+				-i C:\\BRANCH\\button-roulette-key.pem ^
+				ec2-user@13.61.104.52 hostname
+				'''
 			}
 		}
 		
