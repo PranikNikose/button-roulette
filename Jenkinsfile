@@ -112,13 +112,20 @@ pipeline {
 			}
 		}
 		
-		stage('Test EC2 SSH Connection') {
+		stage('Test EC2 Command Execution') {
 			steps {
-				bat '''
-				ssh -o StrictHostKeyChecking=no ^
-				-i C:\\BRANCH\\button-roulette-key.pem ^
-				ec2-user@13.61.104.52 hostname
-				'''
+				sshPublisher(
+					publishers: [
+						sshPublisherDesc(
+							configName: 'button-roulette-ec2',
+							transfers: [
+								sshTransfer(
+									execCommand: 'hostname'
+								)
+							]
+						)
+					]
+				)
 			}
 		}
 		
