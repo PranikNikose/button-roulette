@@ -140,6 +140,24 @@ pipeline {
 			}
 		}
 		
+		stage('Upload Compose File To EC2') {
+			steps {
+				sshPublisher(
+					publishers: [
+						sshPublisherDesc(
+							configName: 'button-roulette-ec2',
+							transfers: [
+								sshTransfer(
+									sourceFiles: 'deployment/docker-compose.yml',
+									remoteDirectory: 'button-roulette'
+								)
+							]
+						)
+					]
+				)
+			}
+		}
+
 		stage('Deploy to EC2') {
 			steps {
 				sshPublisher(
