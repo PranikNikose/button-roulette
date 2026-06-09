@@ -112,6 +112,14 @@ pipeline {
 			}
 		}
 		
+		stage('Deploy') {
+			steps {
+				bat 'docker compose -f docker-compose-deploy.yml down'
+				bat 'docker compose -f docker-compose-deploy.yml pull'
+				bat 'docker compose -f docker-compose-deploy.yml up -d'
+			}
+		}
+		
 		
     }
 }
