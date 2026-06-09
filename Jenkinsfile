@@ -61,7 +61,7 @@ pipeline {
 				stage('Build Frontend Docker') {
 					steps {
 						dir('roulette-frontend') {
-							bat 'docker build -t roulette-frontend:latest .'
+							bat 'docker build --build-arg REACT_APP_API_URL=http://localhost:8888 -t roulette-frontend:latest .'
 						}
 					}
 				}

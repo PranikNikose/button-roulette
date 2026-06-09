@@ -1,0 +1,19 @@
+version: '3.9'
+services:
+  backend:
+    image: 'praniknikose/button-roulette-backend:latest'
+    container_name: roulette-backend
+    ports:
+      - '8888:8888'
+    environment:
+      SERVER_PORT: 8888
+      FRONTEND_URL: 'http://localhost:3000'
+    restart: unless-stopped
+  frontend:
+    image: 'praniknikose/button-roulette-frontend:latest'
+    container_name: roulette-frontend
+    ports:
+      - '3000:80'
+    depends_on:
+      - backend
+    restart: unless-stopped
