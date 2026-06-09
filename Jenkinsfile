@@ -23,6 +23,13 @@ pipeline {
                     url: 'https://github.com/PranikNikose/button-roulette.git'
             }
         }
+		
+		stage('Verify Compose File') {
+			steps {
+				bat 'dir deployment'
+				bat 'type deployment\\docker-compose.yml'
+			}
+		}
 
 		stage('Build Applications') {
 			parallel {
