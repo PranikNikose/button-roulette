@@ -112,6 +112,16 @@ pipeline {
 			}
 		}
 		
+		stage('Test EC2 SSH Connection') {
+			steps {
+				sshagent(credentials: ['ec2-ssh-key']) {
+					bat '''
+					ssh -o StrictHostKeyChecking=no ec2-user@13.61.104.52 "hostname"
+					'''
+				}
+			}
+		}
+		
 		stage('Deploy') {
 			steps {
 				bat 'docker compose -f docker-compose-deploy.yml down'
