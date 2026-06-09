@@ -112,7 +112,7 @@ pipeline {
 			}
 		}
 		
-		stage('Test EC2 SSH Connection') {
+		stage('Test EC2 SSH Connection') { 
 			steps {
 				sshagent(credentials: ['ec2-ssh-key']) {
 					bat '''
