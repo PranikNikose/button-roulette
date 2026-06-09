@@ -13,7 +13,7 @@ The project starts with a simple Spring Boot backend and React frontend and grad
 * Docker Compose
 * Jenkins CI Pipeline
 * Docker Hub Registry
-* Automated Deployment (Upcoming)
+* Automated Deployment
 * Kubernetes (Upcoming)
 * Monitoring & Logging (Upcoming)
 
@@ -31,7 +31,7 @@ This repository is designed for:
 
 # 🎯 Project Objective
 
-The primary objective of this project is to learn and implement the complete DevOps lifecycle from source code management to container orchestration.
+The primary objective of this project is to learn and implement the complete DevOps lifecycle from source code management to deployment and container orchestration.
 
 Instead of learning tools individually, this project demonstrates how each tool fits into a real-world software delivery pipeline.
 
@@ -86,13 +86,18 @@ Jenkins Pipeline
     │
     ├── Create Docker Images
     │
-    └── Push Images
+    ├── Push Images
+    │
+    └── Deploy Latest Images
     │
     ▼
 Docker Hub
     │
     ▼
-Deployment
+Docker Compose Deployment
+    │
+    ▼
+Application Running
     │
     ▼
 Kubernetes (Future)
@@ -130,6 +135,7 @@ Kubernetes (Future)
 * Docker Compose
 * Jenkins CI Pipeline
 * Docker Hub Integration
+* Automated Deployment Pipeline
 
 ---
 
@@ -178,6 +184,7 @@ button-roulette/
 │   └── .env.example
 │
 ├── docker-compose.yml
+├── docker-compose-local-deploy.yml
 ├── Jenkinsfile
 ├── README.md
 │
@@ -437,6 +444,8 @@ JSON Response
 UI Updated
 ```
 
+---
+
 # 📦 Phase 1 – Source Code Management (Git & GitHub)
 
 ## Objective
@@ -525,7 +534,6 @@ Source Code Successfully Version Controlled
 ```
 
 ---
-
 # 🔨 Phase 2 – Build Automation
 
 ## Objective
@@ -662,6 +670,8 @@ roulette-backend
 roulette-frontend
 ```
 
+---
+
 ## Outcome
 
 ```text
@@ -702,7 +712,7 @@ docker compose build
 docker compose up
 ```
 
-Detached Mode
+Detached Mode:
 
 ```bash
 docker compose up -d
@@ -776,6 +786,9 @@ Create Frontend Docker Image
         │
         ▼
 Push Images to Docker Hub
+        │
+        ▼
+Deploy Latest Images
 ```
 
 ---
@@ -796,6 +809,8 @@ Stage 5 : Build Frontend Docker Image
 Stage 6 : Push Backend Docker Image
 
 Stage 7 : Push Frontend Docker Image
+
+Stage 8 : Deploy Latest Images
 ```
 
 ---
@@ -808,7 +823,7 @@ CI Pipeline Successfully Implemented
 
 ---
 
-# ☁️ Phase 6 – Docker Hub Registry
+# ☁️ Phase 6 – Docker Image Registry (Docker Hub)
 
 ## Objective
 
@@ -842,7 +857,11 @@ docker pull <dockerhub-username>/<image-name>
 Example:
 
 ```bash
-docker pull praniknikose/roulette-backend
+docker pull praniknikose/button-roulette-backend
+```
+
+```bash
+docker pull praniknikose/button-roulette-frontend
 ```
 
 ---
@@ -855,6 +874,291 @@ Images Available For Deployment Anywhere
 
 ---
 
+# 🚀 Phase 7 – Continuous Deployment (CD)
+
+## Objective
+
+Automate application deployment after successful image creation and image push to Docker Hub.
+
+Before this phase, Jenkins was able to:
+
+* Build Backend
+* Build Frontend
+* Create Docker Images
+* Push Images to Docker Hub
+
+However, application deployment was still manual.
+
+---
+
+# Problem Statement
+
+Before Continuous Deployment:
+
+```text
+Developer
+   ↓
+Git Push
+   ↓
+GitHub
+   ↓
+Jenkins
+   ↓
+Build
+   ↓
+Docker Build
+   ↓
+Docker Push
+   ↓
+STOP
+```
+
+Images were available in Docker Hub but containers were not automatically updated.
+
+Deployment required manual execution of Docker commands.
+
+---
+
+# Solution
+
+A deployment compose file was created which uses Docker Hub images instead of local Docker builds.
+
+## Deployment Compose File
+
+```text
+docker-compose-local-deploy.yml
+```
+
+This compose file pulls images directly from Docker Hub.
+
+Example:
+
+```yaml
+services:
+
+  backend:
+    image: praniknikose/button-roulette-backend:latest
+
+  frontend:
+    image: praniknikose/button-roulette-frontend:latest
+```
+
+---
+
+# Why Use Image Instead Of Build?
+
+## Development Mode
+
+```yaml
+backend:
+  build:
+    context: ./roulette-backend
+```
+
+Purpose:
+
+* Local Development
+* Testing Dockerfiles
+* Testing Local Changes
+
+Flow:
+
+```text
+Source Code
+    ↓
+Docker Build
+    ↓
+Container
+```
+
+---
+
+## Deployment Mode
+
+```yaml
+backend:
+  image: praniknikose/button-roulette-backend:latest
+```
+
+Purpose:
+
+* Deployment
+* Production Environments
+* CI/CD
+
+Flow:
+
+```text
+Docker Hub
+    ↓
+Pull Image
+    ↓
+Container
+```
+
+Benefits:
+
+* Faster Deployment
+* No Source Code Required
+* No Maven Required
+* No Node.js Required
+* Industry Standard Deployment Pattern
+
+---
+
+# Deployment Process
+
+The deployment process consists of three commands.
+
+## Step 1 – Stop Existing Containers
+
+```bash
+docker compose -f docker-compose-local-deploy.yml down
+```
+
+Purpose:
+
+* Stop Old Containers
+* Remove Old Container Instances
+
+---
+
+## Step 2 – Pull Latest Images
+
+```bash
+docker compose -f docker-compose-local-deploy.yml pull
+```
+
+Purpose:
+
+* Download Latest Backend Image
+* Download Latest Frontend Image
+
+Without this step Docker may continue using cached images.
+
+---
+
+## Step 3 – Start Containers
+
+```bash
+docker compose -f docker-compose-local-deploy.yml up -d
+```
+
+Purpose:
+
+* Start Backend Container
+* Start Frontend Container
+
+---
+
+# Deployment Architecture
+
+```text
+GitHub
+   ↓
+Jenkins
+   ↓
+Maven Build
+   ↓
+NPM Build
+   ↓
+Docker Build
+   ↓
+Docker Hub
+   ↓
+Docker Compose Pull
+   ↓
+Docker Compose Up
+   ↓
+Application Running
+```
+
+---
+
+# Jenkins Deployment Stage
+
+Deployment stage added after image push stages.
+
+```groovy
+stage('Deploy') {
+    steps {
+        bat 'docker compose -f docker-compose-local-deploy.yml down'
+        bat 'docker compose -f docker-compose-local-deploy.yml pull'
+        bat 'docker compose -f docker-compose-local-deploy.yml up -d'
+    }
+}
+```
+
+---
+
+# Verification Steps
+
+## Backend
+
+Open:
+
+```text
+http://localhost:8888/api/cast
+```
+
+Expected:
+
+```json
+{
+  "spellName": "Potion",
+  "emoji": "🧪",
+  "result": "Java was originally called Oak."
+}
+```
+
+---
+
+## Frontend
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+Expected:
+
+* Application Loads
+* Button Click Works
+* Backend API Invoked Successfully
+* Spell Displayed Successfully
+
+---
+
+## Outcome
+
+```text
+Continuous Deployment Successfully Implemented
+```
+
+```text
+Developer
+    ↓
+Git Push
+    ↓
+GitHub
+    ↓
+Jenkins
+    ↓
+Build Backend
+    ↓
+Build Frontend
+    ↓
+Build Docker Images
+    ↓
+Push Docker Images
+    ↓
+Deploy Latest Images
+    ↓
+Application Running
+```
+
+---
 # 🚧 Real Issues Faced During Development
 
 ## Issue 1 – Java Version Error
@@ -996,11 +1300,115 @@ Docker Credentials
 
 ---
 
+## Issue 6 – React Environment Variable Missing After Deployment
+
+### Problem
+
+Frontend successfully deployed but API calls failed.
+
+Browser Error:
+
+```text
+GET http://localhost:3000/undefined/api/cast
+```
+
+Error:
+
+```text
+Unexpected token '<'
+```
+
+### Root Cause
+
+React environment variables are build-time variables.
+
+Frontend image was built without:
+
+```text
+REACT_APP_API_URL
+```
+
+As a result:
+
+```javascript
+process.env.REACT_APP_API_URL
+```
+
+became:
+
+```javascript
+undefined
+```
+
+### Solution
+
+Updated frontend Dockerfile.
+
+Added:
+
+```dockerfile
+ARG REACT_APP_API_URL
+
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+```
+
+before:
+
+```dockerfile
+RUN npm run build
+```
+
+Updated Jenkins Docker Build command:
+
+```groovy
+docker build --build-arg REACT_APP_API_URL=http://localhost:8888 -t roulette-frontend:latest .
+```
+
+This injects the API URL during image creation.
+
+---
+
+## Issue 7 – CORS Error During Deployment
+
+### Problem
+
+Frontend tested on:
+
+```text
+http://localhost:3001
+```
+
+Backend allowed:
+
+```java
+.allowedOrigins("http://localhost:3000")
+```
+
+Result:
+
+```text
+CORS Error
+```
+
+### Solution
+
+Run frontend on:
+
+```text
+http://localhost:3000
+```
+
+or update backend CORS configuration accordingly.
+
+---
+
 # 📈 Project Journey
 
 ## Day 1
 
 ✅ Spring Boot Backend Created
+
+---
 
 ## Day 2
 
@@ -1008,17 +1416,25 @@ Docker Credentials
 
 ✅ Backend API Integration Completed
 
+---
+
 ## Day 3
 
 ✅ Backend Dockerized
+
+---
 
 ## Day 4
 
 ✅ Frontend Dockerized
 
+---
+
 ## Day 5
 
 ✅ Docker Compose Setup
+
+---
 
 ## Day 6
 
@@ -1026,13 +1442,41 @@ Docker Credentials
 
 ✅ Jenkins Pipeline Creation
 
+---
+
 ## Day 7
 
 ✅ Docker Build Automation
 
+---
+
 ## Day 8
 
 ✅ Docker Hub Integration
+
+---
+
+## Day 9
+
+✅ Continuous Deployment Pipeline
+
+✅ Automated Docker Compose Deployment
+
+---
+
+## Day 10
+
+✅ React Build Argument Injection
+
+✅ Deployment Troubleshooting
+
+---
+
+## Day 11
+
+✅ CORS Fixes
+
+✅ End-to-End CI/CD Validation
 
 ---
 
@@ -1057,6 +1501,8 @@ Completed:
 ✅ Jenkins Pipeline
 ✅ Docker Build Automation
 ✅ Docker Hub Push Automation
+✅ Continuous Deployment
+✅ Docker Compose Deployment Automation
 ```
 
 Verified:
@@ -1067,6 +1513,8 @@ Verified:
 ✅ Docker Containers Running
 ✅ Jenkins Build Successful
 ✅ Images Available In Docker Hub
+✅ Automated Deployment Working
+✅ End-To-End CI/CD Working
 ```
 
 ---
@@ -1082,29 +1530,30 @@ Docker Backend                 ✅
 Docker Frontend                ✅
 Docker Compose                 ✅
 Jenkins CI                     ✅
-Docker Hub                     ✅
+Docker Hub Registry            ✅
+Continuous Deployment          ✅
 
-Automated Deployment           ⏳
 AWS Deployment                 ⏳
 Kubernetes                     ⏳
-Monitoring                     ⏳
+Monitoring & Logging           ⏳
 ```
 
 ---
 
 # 🗺 Future Roadmap
 
-## Phase 7 – Automated Deployment
+## Phase 8 – AWS Deployment
 
 Planned:
 
-* Jenkins Deployment Pipeline
-* Docker Compose Deployment
-* EC2 Deployment
+* EC2
+* Security Groups
+* Elastic IP
+* Reverse Proxy (Nginx)
 
 ---
 
-## Phase 8 – Kubernetes
+## Phase 9 – Kubernetes
 
 Planned Components:
 
@@ -1116,7 +1565,7 @@ Planned Components:
 
 ---
 
-## Phase 9 – Monitoring & Logging
+## Phase 10 – Monitoring & Logging
 
 Planned Tools:
 
@@ -1142,16 +1591,23 @@ By completing this project, you will learn:
 * Docker Compose
 * Jenkins
 * Docker Hub
+* Docker Image Registry
+* Continuous Integration
+* Continuous Deployment
+* Docker Compose Deployment
+* React Build-Time Variables
+* CORS Troubleshooting
 * CI/CD Fundamentals
 * DevOps Lifecycle
 * Containerization Concepts
 * Deployment Fundamentals
+* Production Style Deployment Flow
 
 ---
 
 # 👨‍💻 Author
 
-Pranik Nikose
+**Pranik Nikose**
 
 Java Developer | DevOps Engineer
 
@@ -1159,4 +1615,32 @@ Java Developer | DevOps Engineer
 
 # ⭐ Support
 
-If this project helped you understand Java, Docker, Jenkins, or DevOps concepts, consider giving the repository a star and using it as a reference for your own DevOps learning journey.
+If this project helped you understand Java, Docker, Jenkins, CI/CD, or DevOps concepts, consider giving the repository a star and using it as a reference for your own DevOps learning journey.
+
+Contributions, suggestions, and improvements are always welcome.
+
+---
+
+# 🎯 Final CI/CD Pipeline
+
+```text
+Developer
+    ↓
+Git Push
+    ↓
+GitHub
+    ↓
+Jenkins
+    ↓
+Build Backend
+    ↓
+Build Frontend
+    ↓
+Build Docker Images
+    ↓
+Push Docker Images
+    ↓
+Deploy Latest Images
+    ↓
+Application Running
+```
