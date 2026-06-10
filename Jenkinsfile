@@ -71,7 +71,15 @@ pipeline {
 				stage('Build Frontend Docker') {
 					steps {
 						dir('roulette-frontend') {
-							bat 'docker build --build-arg REACT_APP_API_URL=http://13.61.4.145:8888 -t roulette-frontend:latest .'
+							 bat 'docker build -t roulette-frontend:latest .'
+						}
+					}
+				}
+
+				stage('Build Nginx Docker') {
+					steps {
+						dir('deployment/nginx') {
+							bat 'docker build -t roulette-nginx:latest .'
 						}
 					}
 				}
@@ -119,6 +127,17 @@ pipeline {
 						bat "docker push praniknikose/button-roulette-frontend:latest"
 					}
 				}
+				
+				stage('Push Nginx Image') {
+					steps {
+						bat "docker tag roulette-nginx:latest praniknikose/button-roulette-nginx:${BUILD_NUMBER}"
+						bat "docker tag roulette-nginx:latest praniknikose/button-roulette-nginx:latest"
+
+						bat "docker push praniknikose/button-roulette-nginx:${BUILD_NUMBER}"
+						bat "docker push praniknikose/button-roulette-nginx:latest"
+					}
+				}
+
 			}
 		}
 		
@@ -171,9 +190,15 @@ pipeline {
 							transfers: [
 								sshTransfer(
 									execCommand: '''
+									
 									cd /home/ec2-user/button-roulette
+
 									docker compose pull
+
+									docker compose down
+
 									docker compose up -d
+									
 									'''
 								)
 							]
