@@ -2622,7 +2622,918 @@ Single Source Of Truth
 ```
 
 ---
+# 🌐 Phase 10 - Nginx Reverse Proxy
 
+## Objective
+
+Introduce Nginx as a reverse proxy and create a single entry point for the application.
+
+Before this phase:
+
+```text
+Frontend
+http://<EC2-PUBLIC-IP>:3000
+
+Backend
+http://<EC2-PUBLIC-IP>:8888/api/cast
+```
+
+Problems:
+
+```text
+Multiple Public Ports
+
+Backend Directly Exposed
+
+Hardcoded API URLs
+
+Frontend Dependent On Backend Address
+
+Not Production Friendly
+```
+
+---
+
+# Why Nginx?
+
+Nginx acts as a reverse proxy between users and application containers.
+
+Benefits:
+
+```text
+Single Entry Point
+
+Request Routing
+
+Backend Isolation
+
+Production-Ready Architecture
+
+Foundation For Kubernetes Ingress
+```
+
+---
+
+# Architecture Before Nginx
+
+```text
+Internet
+    │
+    ├── http://SERVER-IP:3000
+    │
+    └── http://SERVER-IP:8888
+```
+
+Frontend and backend were accessed independently using different ports.
+
+---
+
+# Architecture After Nginx
+
+```text
+Internet
+    │
+    ▼
+Nginx Reverse Proxy
+    │
+    ├── /
+    │    ▼
+    │ Frontend Container
+    │
+    └── /api/*
+         ▼
+      Backend Container
+```
+
+Users now access only:
+
+```text
+http://SERVER-IP
+```
+
+Nginx decides where requests should be routed.
+
+---
+
+# Repository Structure Update
+
+A dedicated Nginx folder was introduced.
+
+```text
+button-roulette
+│
+├── deployment
+│   │
+│   ├── docker-compose.yml
+│   │
+│   └── nginx
+│       ├── Dockerfile
+│       └── nginx.conf
+│
+├── roulette-backend
+├── roulette-frontend
+├── Jenkinsfile
+└── README.md
+```
+
+---
+
+# Nginx Configuration
+
+Location:
+
+```text
+deployment/nginx/nginx.conf
+```
+
+Configuration:
+
+```nginx
+events {
+}
+
+http {
+
+    server {
+
+        listen 80;
+
+        location / {
+            proxy_pass http://frontend;
+        }
+
+        location /api/ {
+            proxy_pass http://backend:8888;
+        }
+
+    }
+
+}
+```
+
+---
+
+# Understanding Request Routing
+
+Frontend Requests:
+
+```text
+http://SERVER-IP/
+```
+
+Nginx Routes To:
+
+```text
+frontend container
+```
+
+Backend Requests:
+
+```text
+http://SERVER-IP/api/cast
+```
+
+Nginx Routes To:
+
+```text
+backend:8888
+```
+
+This removes the need for users to know internal container ports.
+
+---
+
+# Nginx Dockerfile
+
+Location:
+
+```text
+deployment/nginx/Dockerfile
+```
+
+Configuration:
+
+```dockerfile
+FROM nginx:alpine
+
+COPY nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 80
+
+CMD ["nginx","-g","daemon off;"]
+```
+
+---
+
+# Why Containerize Nginx?
+
+Benefits:
+
+```text
+Version Controlled Configuration
+
+Portable Deployment
+
+Consistent Runtime
+
+CI/CD Friendly
+
+Docker Hub Distribution
+```
+
+Nginx now follows the same lifecycle as:
+
+```text
+Backend Image
+
+Frontend Image
+```
+
+and is deployed using Docker images instead of manual server configuration.
+
+# Frontend Refactoring For Reverse Proxy
+
+## Problem With Previous Approach
+
+Initially the frontend called the backend using a build-time environment variable.
+
+Example:
+
+```javascript
+await fetch(`${process.env.REACT_APP_API_URL}/api/cast`);
+```
+
+The frontend image was built using:
+
+```text
+REACT_APP_API_URL=http://<EC2-PUBLIC-IP>:8888
+```
+
+Problems:
+
+```text
+Frontend Depended On Backend Address
+
+Frontend Needed Rebuild When Server Changed
+
+Hardcoded Infrastructure Details
+
+Not Suitable For Reverse Proxy Architecture
+```
+
+---
+
+# Solution - Relative API Paths
+
+The frontend was updated to use relative URLs.
+
+Before:
+
+```javascript
+await fetch(`${process.env.REACT_APP_API_URL}/api/cast`);
+```
+
+After:
+
+```javascript
+await fetch('/api/cast');
+```
+
+---
+
+# Why Relative URLs?
+
+Benefits:
+
+```text
+Frontend No Longer Knows Backend Address
+
+No Hardcoded Server IP
+
+No Backend Port Dependency
+
+Works Behind Reverse Proxy
+
+Compatible With Kubernetes Ingress
+```
+
+Request Flow:
+
+```text
+Browser
+    ↓
+/api/cast
+    ↓
+Nginx
+    ↓
+Backend Container
+```
+
+The React application no longer needs to know where the backend is hosted.
+
+---
+
+# Local Development Support
+
+## Challenge
+
+After switching to:
+
+```javascript
+fetch('/api/cast')
+```
+
+local development stopped working.
+
+Reason:
+
+```text
+React Running On:
+http://localhost:3000
+
+Backend Running On:
+http://localhost:8888
+```
+
+The browser would attempt:
+
+```text
+http://localhost:3000/api/cast
+```
+
+instead of:
+
+```text
+http://localhost:8888/api/cast
+```
+
+---
+
+# React Proxy Configuration
+
+To solve this issue, a development proxy was added.
+
+Location:
+
+```text
+roulette-frontend/package.json
+```
+
+Added:
+
+```json
+{
+  "proxy": "http://localhost:8888"
+}
+```
+
+---
+
+# How React Proxy Works
+
+Development Flow:
+
+```text
+Browser
+    ↓
+localhost:3000/api/cast
+    ↓
+React Development Server
+    ↓
+localhost:8888/api/cast
+```
+
+Benefits:
+
+```text
+No CORS Issues
+
+No Hardcoded URLs
+
+Same Code For Development And Production
+```
+
+---
+
+# Validation
+
+Backend Started:
+
+```bash
+cd roulette-backend
+
+mvn spring-boot:run
+```
+
+Frontend Started:
+
+```bash
+cd roulette-frontend
+
+npm start
+```
+
+Verification:
+
+```text
+http://localhost:3000
+```
+
+Result:
+
+```text
+Frontend Loaded Successfully
+
+API Calls Successful
+
+Spell Responses Displayed Correctly
+```
+
+This validated that:
+
+```javascript
+fetch('/api/cast')
+```
+
+works correctly in the development environment.
+
+---
+
+# Frontend Dockerfile Simplification
+
+Because the frontend no longer depends on:
+
+```text
+REACT_APP_API_URL
+```
+
+the Dockerfile was simplified.
+
+Removed:
+
+```dockerfile
+ARG REACT_APP_API_URL
+
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+```
+
+---
+
+# Updated Frontend Dockerfile
+
+```dockerfile
+# Build Stage
+
+FROM node:20-alpine AS build
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build
+
+# Runtime Stage
+
+FROM nginx:alpine
+
+COPY --from=build /app/build /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx","-g","daemon off;"]
+```
+
+---
+
+# Benefits Achieved
+
+```text
+Cleaner Dockerfile
+
+Environment Agnostic Frontend
+
+No Build-Time Backend Configuration
+
+Simplified CI/CD Pipeline
+
+Improved Portability
+```
+
+---
+
+# Jenkins Pipeline Simplification
+
+Because the frontend no longer required:
+
+```text
+REACT_APP_API_URL
+```
+
+the Jenkins build command was simplified.
+
+Before:
+
+```groovy
+docker build --build-arg REACT_APP_API_URL=http://SERVER-IP:8888 -t roulette-frontend:latest .
+```
+
+After:
+
+```groovy
+docker build -t roulette-frontend:latest .
+```
+
+---
+
+# Benefits
+
+```text
+No Hardcoded Server IP
+
+No Environment-Specific Build
+
+Reusable Frontend Image
+
+Simpler Deployment Process
+```
+
+At this point the frontend became completely independent from the backend address and could operate behind Nginx using relative API paths.
+
+# Docker Compose Architecture Update
+
+## Objective
+
+Integrate Nginx into the deployment architecture and establish a single entry point for all incoming requests.
+
+Before Nginx:
+
+```text
+Frontend
+http://SERVER-IP:3000
+
+Backend
+http://SERVER-IP:8888
+```
+
+Users had to know multiple ports.
+
+---
+
+# Updated Docker Compose Configuration
+
+Location:
+
+```text
+deployment/docker-compose.yml
+```
+
+Configuration:
+
+```yaml
+version: '3.9'
+
+services:
+
+  nginx:
+    image: 'praniknikose/button-roulette-nginx:latest'
+    container_name: roulette-nginx
+    ports:
+      - '80:80'
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+
+  backend:
+    image: 'praniknikose/button-roulette-backend:latest'
+    container_name: roulette-backend
+    environment:
+      SERVER_PORT: 8888
+      FRONTEND_URL: 'http://SERVER-IP'
+    restart: unless-stopped
+
+  frontend:
+    image: 'praniknikose/button-roulette-frontend:latest'
+    container_name: roulette-frontend
+    depends_on:
+      - backend
+    restart: unless-stopped
+```
+
+---
+
+# Why Remove Port Exposure?
+
+Before:
+
+```text
+Frontend
+3000
+
+Backend
+8888
+```
+
+After:
+
+```text
+Nginx
+80
+```
+
+Only Nginx is exposed publicly.
+
+Benefits:
+
+```text
+Cleaner Architecture
+
+Improved Security
+
+Production-Like Deployment
+
+Single Entry Point
+```
+
+---
+
+# Nginx Docker Image Build Automation
+
+A dedicated Docker image was created for Nginx.
+
+Repository:
+
+```text
+praniknikose/button-roulette-nginx
+```
+
+---
+
+# Jenkins Build Stage Update
+
+Added:
+
+```groovy
+stage('Build Nginx Docker') {
+    steps {
+        dir('deployment/nginx') {
+            bat 'docker build -t roulette-nginx:latest .'
+        }
+    }
+}
+```
+
+---
+
+# Jenkins Push Stage Update
+
+Added:
+
+```groovy
+stage('Push Nginx Image') {
+    steps {
+
+        bat "docker tag roulette-nginx:latest praniknikose/button-roulette-nginx:${BUILD_NUMBER}"
+        bat "docker tag roulette-nginx:latest praniknikose/button-roulette-nginx:latest"
+
+        bat "docker push praniknikose/button-roulette-nginx:${BUILD_NUMBER}"
+        bat "docker push praniknikose/button-roulette-nginx:latest"
+    }
+}
+```
+
+---
+
+# Why Build Nginx In Jenkins?
+
+Alternative approach:
+
+```text
+Upload Nginx Files To EC2
+Build On EC2
+```
+
+Problems:
+
+```text
+Server Requires Source Code
+
+Build Logic On Server
+
+Inconsistent Deployment Process
+```
+
+Selected approach:
+
+```text
+Build In Jenkins
+    ↓
+Push To Docker Hub
+    ↓
+Pull On EC2
+```
+
+Benefits:
+
+```text
+Consistent Build Process
+
+Immutable Images
+
+Production Standard Workflow
+
+Centralized Image Management
+```
+
+---
+
+# Deployment Pipeline Update
+
+Final Deployment Flow:
+
+```text
+Developer
+    ↓
+Git Push
+    ↓
+GitHub
+    ↓
+Jenkins
+
+Build Backend
+Build Frontend
+Build Nginx
+
+    ↓
+
+Docker Images
+
+    ↓
+
+Docker Hub
+
+    ↓
+
+Upload docker-compose.yml
+
+    ↓
+
+SSH To EC2
+
+    ↓
+
+docker compose pull
+
+    ↓
+
+docker compose down
+
+    ↓
+
+docker compose up -d
+
+    ↓
+
+Application Live
+```
+
+---
+
+# Deployment Verification
+
+Verify running containers:
+
+```bash
+docker ps
+```
+
+Expected:
+
+```text
+roulette-nginx
+
+roulette-backend
+
+roulette-frontend
+```
+
+---
+
+# Browser Verification
+
+Open:
+
+```text
+http://SERVER-IP
+```
+
+Expected:
+
+```text
+Button Roulette UI Loads Successfully
+```
+
+Click:
+
+```text
+🎰 CLICK ME
+```
+
+Expected:
+
+```text
+Spell Response Displayed Successfully
+```
+
+---
+
+# Request Flow Verification
+
+Frontend Request:
+
+```text
+http://SERVER-IP
+```
+
+Flow:
+
+```text
+Browser
+    ↓
+Nginx
+    ↓
+Frontend Container
+```
+
+API Request:
+
+```text
+http://SERVER-IP/api/cast
+```
+
+Flow:
+
+```text
+Browser
+    ↓
+Nginx
+    ↓
+Backend Container
+```
+
+---
+
+# Benefits Achieved
+
+```text
+Reverse Proxy Architecture
+
+Single Entry Point
+
+Backend Isolation
+
+Nginx Containerization
+
+Automated Nginx Deployment
+
+Production-Like Networking
+
+Simplified Frontend Configuration
+```
+
+---
+
+# ✅ Phase 10 Outcome
+
+Successfully implemented:
+
+```text
+Nginx Reverse Proxy
+
+Single Public Endpoint
+
+Relative API Routing
+
+React Development Proxy
+
+Frontend Decoupling
+
+Nginx Docker Image
+
+Docker Hub Integration
+
+Jenkins Nginx Build Automation
+
+Jenkins Nginx Deployment
+
+Production-Style Request Routing
+```
+
+---
 # 📚 Important Lessons Learned
 
 ## Lesson 1
@@ -2790,64 +3701,127 @@ GitHub
     ↓
 Jenkins
 
-    Build Backend
-    Build Frontend
+    ├── Build Backend
+    ├── Build Frontend
+    └── Build Nginx
 
-    ↓
+            ↓
 
-Build Docker Images
+      Docker Images
 
-    ↓
+            ↓
 
-Push Images To Docker Hub
+       Docker Hub
 
-    ↓
+            ↓
 
 Upload docker-compose.yml
 
-    ↓
+            ↓
 
-SSH To EC2
+      SSH To EC2
 
-    ↓
+            ↓
 
-docker compose pull
+ docker compose pull
 
-    ↓
+            ↓
 
-docker compose up -d
+ docker compose down
 
-    ↓
+            ↓
 
-Application Live
+ docker compose up -d
+
+            ↓
+
+         AWS EC2
+
+            ↓
+
+     Nginx Reverse Proxy
+
+        ├── /
+        │
+        ▼
+   Frontend Container
+
+        └── /api/*
+             │
+             ▼
+      Backend Container
 ```
+
 
 ---
 # 🌐 Application Endpoints
 
-After successful deployment:
+After successful Nginx deployment:
 
-## Frontend
-
-```text
-http://<EC2-PUBLIC-IP>:3000
-```
-
-## Backend
+## Application
 
 ```text
-http://<EC2-PUBLIC-IP>:8888/api/cast
+http://<EC2-PUBLIC-IP>
 ```
 
 Example:
 
-```json
-{
-  "spellName": "FireBall",
-  "emoji": "🔥",
-  "result": "Code Fails. Developer Needed."
-}
+```text
+http://13.61.4.145
 ```
+
+---
+
+## API Endpoint
+
+```text
+http://<EC2-PUBLIC-IP>/api/cast
+```
+
+Example:
+
+```text
+http://13.61.4.145/api/cast
+```
+
+---
+
+## Request Flow
+
+Frontend Request:
+
+```text
+http://SERVER-IP/
+```
+
+API Request:
+
+```text
+http://SERVER-IP/api/cast
+```
+
+Both requests are routed through:
+
+```text
+Nginx Reverse Proxy
+```
+
+before reaching application containers.
+
+---
+
+## Legacy Endpoints
+
+The following ports were used before Nginx:
+
+```text
+http://SERVER-IP:3000
+
+http://SERVER-IP:8888
+```
+
+These are no longer required for normal application access.
+
 
 ---
 # 📊 Current Project Status
@@ -2863,6 +3837,7 @@ Example:
 | Automated Deployment To EC2 | ✅      |
 | EC2 Bootstrap Automation    | ✅      |
 | Configuration Management    | ✅      |
+| Nginx Reverse Proxy         | ✅      |
 
 ---
 # 📖 Key DevOps Learnings
@@ -2971,38 +3946,6 @@ This validated that the deployment process is repeatable and reliable.
 
 # 🚀 Future Roadmap
 
-## Phase 10 - Nginx Reverse Proxy
-
-Goals:
-
-```text
-Single Entry Point
-
-Reverse Proxy
-
-Frontend Routing
-
-Backend Routing
-
-Remove Direct Backend Exposure
-```
-
-Target:
-
-```text
-http://SERVER-IP
-```
-
-instead of:
-
-```text
-http://SERVER-IP:3000
-
-http://SERVER-IP:8888
-```
-
----
-
 ## Phase 11 - Infrastructure as Code
 
 Topics:
@@ -3015,6 +3958,8 @@ EC2 Automation
 Security Groups
 
 Elastic IP
+
+Remote State
 ```
 
 ---
@@ -3031,6 +3976,8 @@ Server Provisioning
 Package Installation
 
 Environment Standardization
+
+Application Configuration
 ```
 
 ---
@@ -3044,6 +3991,8 @@ Pods
 
 Deployments
 
+ReplicaSets
+
 Services
 
 Ingress
@@ -3051,9 +4000,48 @@ Ingress
 ConfigMaps
 
 Secrets
+
+Persistent Volumes
 ```
 
 ---
+
+## Phase 14 - Kubernetes On AWS
+
+Topics:
+
+```text
+Amazon EKS
+
+Worker Nodes
+
+Load Balancers
+
+Ingress Controllers
+
+Cluster Management
+```
+
+---
+
+## Phase 15 - GitOps & Observability
+
+Topics:
+
+```text
+ArgoCD
+
+Prometheus
+
+Grafana
+
+Centralized Monitoring
+
+Alerting
+
+Production Operations
+```
+
 
 # 🎉 Final Outcome
 
@@ -3078,10 +4066,36 @@ Automated Deployment
 
 Configuration Management
 
+EC2 Bootstrap Automation
+
+Nginx Reverse Proxy
+
+Single Public Endpoint
+
+Production-Style Request Routing
+
 Cloud-Based CI/CD Pipeline
 ```
 
-The project now demonstrates a complete DevOps workflow from source code commit to automated deployment on AWS EC2.
+The project now demonstrates a complete DevOps workflow:
 
-The next step is to move towards production-grade architecture using Nginx Reverse Proxy, Infrastructure as Code, and Kubernetes.
+```text
+Developer
+    ↓
+GitHub
+    ↓
+Jenkins
+    ↓
+Docker Build
+    ↓
+Docker Hub
+    ↓
+AWS EC2
+    ↓
+Nginx Reverse Proxy
+    ↓
+Frontend + Backend
+```
+
+This architecture closely resembles modern production deployments and provides a strong foundation for upcoming Terraform, Ansible, and Kubernetes phases.
 
