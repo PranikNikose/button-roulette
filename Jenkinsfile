@@ -10,10 +10,13 @@ pipeline {
 	
 		stage('Environment Check') {
 			steps {
+				bat 'whoami'
 				bat 'java -version'
 				bat 'javac -version'
 				bat 'mvn -version'
 				bat 'docker --version'
+				bat 'docker version'
+				bat 'docker ps'
 			}
 		}
 	
