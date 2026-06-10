@@ -3532,6 +3532,310 @@ Jenkins Nginx Deployment
 
 Production-Style Request Routing
 ```
+---
+# 🔗 Phase 10.5 - GitHub Webhook Integration
+
+## Objective
+
+Automate Jenkins pipeline execution whenever code is pushed to GitHub.
+
+Before this phase, every code change required a manual Jenkins build trigger.
+
+Workflow Before:
+
+```text
+Developer
+    ↓
+Git Push
+    ↓
+GitHub
+    ↓
+Manual Click
+"Build Now"
+    ↓
+Jenkins Pipeline
+```
+
+Problems:
+
+```text
+Manual Intervention Required
+
+Not Fully Automated
+
+Risk Of Forgetting Deployments
+
+Not Production Friendly
+```
+
+---
+
+# Goal
+
+Automatically trigger Jenkins whenever code is pushed to GitHub.
+
+Workflow After:
+
+```text
+Developer
+    ↓
+Git Push
+    ↓
+GitHub Webhook
+    ↓
+Jenkins Pipeline
+    ↓
+Docker Hub
+    ↓
+AWS EC2
+    ↓
+Application Updated
+```
+
+This completed the Continuous Integration portion of the project.
+
+---
+
+# Challenge
+
+Jenkins was running locally on:
+
+```text
+http://localhost:8080
+```
+
+GitHub Webhooks require a publicly accessible URL.
+
+GitHub cannot access:
+
+```text
+localhost
+```
+
+because localhost exists only on the developer machine.
+
+---
+
+# Solution - ngrok
+
+ngrok was used to expose Jenkins temporarily to the internet.
+
+Command:
+
+```bash
+ngrok http 8080
+```
+
+Example Output:
+
+```text
+Forwarding
+
+https://xxxxxxxx.ngrok-free.dev
+    ↓
+http://localhost:8080
+```
+
+Architecture:
+
+```text
+GitHub
+    ↓
+Webhook
+    ↓
+ngrok Public URL
+    ↓
+Jenkins (localhost:8080)
+```
+
+---
+
+# Jenkins Configuration
+
+Navigate:
+
+```text
+Jenkins
+    ↓
+Pipeline Job
+    ↓
+Configure
+    ↓
+Build Triggers
+```
+
+Enable:
+
+```text
+GitHub hook trigger for GITScm polling
+```
+
+Save the job.
+
+---
+
+# GitHub Webhook Configuration
+
+Navigate:
+
+```text
+GitHub Repository
+    ↓
+Settings
+    ↓
+Webhooks
+    ↓
+Add Webhook
+```
+
+Configuration:
+
+```text
+Payload URL:
+https://<ngrok-url>/github-webhook/
+
+Content Type:
+application/json
+
+Secret:
+None
+
+Events:
+Just the push event
+
+Active:
+Enabled
+```
+
+---
+
+# Verification
+
+Create a test commit:
+
+```bash
+git add .
+
+git commit -m "Webhook Test"
+
+git push origin button-roulette-Pranik
+```
+
+Expected Result:
+
+```text
+GitHub Receives Push
+
+Webhook Sent
+
+Jenkins Build Starts Automatically
+
+Pipeline Executes
+
+Deployment Completed
+```
+
+No manual interaction required.
+
+---
+
+# End-To-End CI/CD Flow
+
+```text
+Developer
+    ↓
+Git Push
+    ↓
+GitHub
+    ↓
+Webhook
+    ↓
+Jenkins
+
+Build Backend
+Build Frontend
+Build Nginx
+
+    ↓
+
+Docker Hub
+
+    ↓
+
+Upload Compose File
+
+    ↓
+
+SSH To EC2
+
+    ↓
+
+Docker Compose Deployment
+
+    ↓
+
+Nginx Reverse Proxy
+
+    ↓
+
+Frontend + Backend
+```
+
+---
+
+# Benefits Achieved
+
+```text
+Automatic Build Triggering
+
+Reduced Manual Steps
+
+Faster Feedback Loop
+
+Production-Like CI/CD Workflow
+
+GitHub And Jenkins Integration
+
+Improved Developer Experience
+```
+
+---
+
+# Lessons Learned
+
+```text
+GitHub Webhooks Require Public Accessibility
+
+Local Jenkins Cannot Receive Internet Traffic Directly
+
+ngrok Can Be Used For Development And Learning
+
+Jenkins Can Automatically React To Source Code Changes
+
+Webhook-Based Automation Is A Core CI/CD Concept
+```
+
+---
+
+# ✅ Phase 10.5 Outcome
+
+Successfully implemented:
+
+```text
+ngrok Integration
+
+Public Jenkins Endpoint
+
+GitHub Webhook
+
+Automatic Jenkins Trigger
+
+Push-Based CI/CD Workflow
+
+End-To-End Deployment Automation
+```
+
+The project now supports fully automated deployments from GitHub commits without requiring manual Jenkins execution.
 
 ---
 # 📚 Important Lessons Learned
