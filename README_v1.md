@@ -430,23 +430,6 @@ Source Code Versioning
 
 # 🐳 Phase 2 - Dockerization
 
-In the next phase we will:
-
-```text
-Containerize Backend
-
-Containerize Frontend
-
-Create Docker Images
-
-Create Docker Compose
-
-Run Application Using Containers
-```
-
-
-# 🐳 Phase 2 - Dockerization
-
 ## Objective
 
 Containerize both backend and frontend applications so they can run consistently across different environments.
@@ -984,24 +967,6 @@ Local Container Deployment
 ```
 
 ---
-
-# 🔄 Phase 3 - Continuous Integration (CI)
-
-In the next phase we will:
-
-```text
-Install Jenkins
-
-Configure JDK
-
-Configure Maven
-
-Automate Builds
-
-Create Jenkins Pipeline
-
-Implement Continuous Integration
-```
 
 # 🔄 Phase 3 - Continuous Integration (CI)
 
@@ -1660,23 +1625,6 @@ Centralized Registry
 
 ---
 
-# 🚀 Phase 6 - Continuous Deployment (CD)
-
-In the next phase we will:
-
-```text
-Deploy To AWS EC2
-
-Configure Docker Compose
-
-Pull Images From Docker Hub
-
-Automate Deployment
-
-Implement Continuous Deployment
-```
-
-
 # ☁️ Phase 6 - AWS EC2 Deployment
 
 ## Objective
@@ -2294,24 +2242,6 @@ Continuous Deployment To EC2
 
 # ⚙️ Phase 8 - EC2 Bootstrap Using User Data
 
-In the next phase we will:
-
-```text
-Automate Server Setup
-
-Install Docker Automatically
-
-Install Docker Compose Automatically
-
-Reduce EC2 Provisioning Effort
-
-Improve Recovery Process
-```
-
-
-
-# ⚙️ Phase 8 - EC2 Bootstrap Using User Data
-
 ## Objective
 
 Reduce manual server setup effort by automatically installing required software during EC2 creation.
@@ -2893,7 +2823,33 @@ Application Live
 ```
 
 ---
+# 🌐 Application Endpoints
 
+After successful deployment:
+
+## Frontend
+
+```text
+http://<EC2-PUBLIC-IP>:3000
+```
+
+## Backend
+
+```text
+http://<EC2-PUBLIC-IP>:8888/api/cast
+```
+
+Example:
+
+```json
+{
+  "spellName": "FireBall",
+  "emoji": "🔥",
+  "result": "Code Fails. Developer Needed."
+}
+```
+
+---
 # 📊 Current Project Status
 
 | Phase                       | Status |
@@ -2907,6 +2863,109 @@ Application Live
 | Automated Deployment To EC2 | ✅      |
 | EC2 Bootstrap Automation    | ✅      |
 | Configuration Management    | ✅      |
+
+---
+# 📖 Key DevOps Learnings
+
+## Learning 1 - Deployment vs Infrastructure
+
+Application deployment and infrastructure provisioning are different concerns.
+
+Deploying Docker containers does not automatically create servers.
+
+```text
+Deployment
+    ≠
+Infrastructure
+```
+
+---
+
+## Learning 2 - Hardcoded IP Addresses Create Problems
+
+During EC2 replacement, the following configurations required updates:
+
+```text
+React API URL
+
+Backend CORS URL
+
+Jenkins Publish Over SSH Host
+```
+
+This demonstrated why production systems use:
+
+```text
+Elastic IP
+
+DNS
+
+Domain Names
+
+Load Balancers
+```
+
+instead of hardcoded server IP addresses.
+
+---
+
+## Learning 3 - Configuration Should Be Version Controlled
+
+Initially:
+
+```text
+docker-compose.yml
+```
+
+existed only on EC2.
+
+This created configuration drift.
+
+Moving configuration into GitHub established:
+
+```text
+Single Source Of Truth
+```
+
+for deployments.
+
+---
+
+## Learning 4 - Automated Deployment Is Not Infrastructure Automation
+
+Current State:
+
+```text
+Application Deployment
+    ✅ Automated
+
+Server Creation
+    ❌ Manual
+```
+
+Future phases will automate infrastructure using:
+
+```text
+Terraform
+
+Ansible
+```
+
+---
+
+## Learning 5 - Recovery Testing Is Important
+
+A brand-new EC2 instance was created and the application was successfully redeployed using:
+
+```text
+User Data Script
+
+Jenkins Pipeline
+
+Docker Hub Images
+```
+
+This validated that the deployment process is repeatable and reliable.
 
 ---
 
