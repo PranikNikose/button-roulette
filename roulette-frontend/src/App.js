@@ -23,6 +23,22 @@ function App() {
 
   return (
     <div className="container">
+      {/* Navigation */}
+      <div className="top-nav">
+  <a
+    className="nav-link"
+    href="https://praniknikose.top"
+  >
+    🏠 Home
+  </a>
+
+  <a
+    className="nav-link"
+    href="http://roulette.praniknikose.top/"
+  >
+    🎰 Roulette
+  </a>
+</div>
 
       <button
         className="roulette-button"
@@ -54,6 +70,11 @@ function App() {
         ))}
 
       </div>
+
+ {/* Version */}
+      <div className="version">
+  Version v1.0.0
+</div>
 
     </div>
   );
