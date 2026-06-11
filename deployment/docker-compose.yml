@@ -16,7 +16,7 @@ services:
     container_name: roulette-backend
     environment:
       SERVER_PORT: 8888
-      FRONTEND_URL: 'http://13.61.4.145'
+      FRONTEND_URL: 'http://16.171.24.117/'
     restart: unless-stopped
   
   frontend:
