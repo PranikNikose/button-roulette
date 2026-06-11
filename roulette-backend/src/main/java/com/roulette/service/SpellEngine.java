@@ -14,10 +14,11 @@ public class SpellEngine {
 
 	private final Random random = new Random();
 
-	private final List<String> spells = List.of("FireBall", "FreezeTime", "Confuse", "Thunder", "Potion", "Devops");
+	private final List<String> spells = List.of("FireBall", "FreezeTime", "Confuse", "Thunder", "Potion", "Devops",
+			"Java");
 
 	private final Map<String, String> emojiMap = Map.of("FireBall", "🔥", "FreezeTime", "⏰", "Confuse", "🌀", "Thunder",
-			"⚡", "Potion", "🧪", "Devops", "🚀");
+			"⚡", "Potion", "🧪", "Devops", "🚀", "Java", "🕵️");
 
 	public SpellResponse castSpell() {
 
