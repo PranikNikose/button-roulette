@@ -31,4 +31,3 @@ docker --version
 docker compose version
 
 echo "Docker and Docker Compose Plugin installed successfully"
-
