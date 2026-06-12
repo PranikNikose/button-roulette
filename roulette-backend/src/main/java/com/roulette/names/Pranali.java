@@ -11,7 +11,7 @@ import com.roulette.model.SpellResponse;
 public class Pranali extends BaseSpell {
 
 	private static final String SINGLE_EMOJI = "😎";
-	private static final String SINGLE_MESSAGE = "Sleep Well. Eat Well.";
+	private static final String SINGLE_MESSAGE = "Sleep Only.";
 
 	@Override
 	public SpellResponse cast() {
