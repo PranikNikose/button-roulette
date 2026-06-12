@@ -9,7 +9,7 @@ import com.roulette.model.SpellResponse;
 public class Diksha extends BaseSpell {
 
 	private static final String SINGLE_EMOJI = "👧";
-	private static final String SINGLE_MESSAGE = "Love You!";
+	private static final String SINGLE_MESSAGE = "Devops Engineer";
 
 	@Override
 	public SpellResponse cast() {
