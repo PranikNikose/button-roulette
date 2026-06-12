@@ -3838,6 +3838,447 @@ End-To-End Deployment Automation
 The project now supports fully automated deployments from GitHub commits without requiring manual Jenkins execution.
 
 ---
+---
+# 🏗️ Phase 11 - Infrastructure as Code (Terraform)
+
+## Objective
+
+Automate AWS infrastructure provisioning using Terraform.
+
+Before this phase:
+
+```text
+AWS Console
+    ↓
+Create EC2
+    ↓
+Create Security Group
+    ↓
+Download PEM Key
+    ↓
+Install Docker
+    ↓
+Deploy Application
+```
+
+Problems:
+
+```text
+Manual Infrastructure Creation
+
+Difficult To Reproduce
+
+Error Prone
+
+No Version Control
+
+No Infrastructure History
+```
+
+---
+
+# Why Terraform?
+
+Terraform allows infrastructure to be managed as code.
+
+Benefits:
+
+```text
+Infrastructure Version Control
+
+Repeatable Environments
+
+Automation
+
+Disaster Recovery
+
+Production Standard Workflow
+```
+
+---
+
+# Infrastructure As Code Flow
+
+```text
+Terraform Code
+        ↓
+Terraform Apply
+        ↓
+AWS Infrastructure
+        ↓
+EC2
+Security Groups
+Elastic IP
+```
+
+---
+
+# Terraform Repository Structure
+
+```text
+terraform
+│
+├── main.tf
+├── variables.tf
+├── terraform.tfvars
+├── outputs.tf
+└── userdata.sh
+
+terraform-backend
+│
+├── main.tf
+├── variables.tf
+├── terraform.tfvars
+└── outputs.tf
+```
+
+# Terraform Backend
+
+## Objective
+
+Store Terraform state remotely in AWS.
+
+Without remote state:
+
+```text
+terraform.tfstate
+```
+
+exists only on the local machine.
+
+Problems:
+
+```text
+State Loss Risk
+
+No Team Collaboration
+
+No State Locking
+
+No Backup
+```
+
+---
+
+# Backend Architecture
+
+```text
+Terraform
+    ↓
+S3 Bucket
+    ↓
+terraform.tfstate
+
+DynamoDB
+    ↓
+State Locking
+```
+
+---
+
+# Resources Created
+
+## S3 Bucket
+
+Purpose:
+
+```text
+Store Terraform State File
+```
+
+Example:
+
+```text
+pranik-terraform-state
+```
+
+---
+
+## DynamoDB Table
+
+Purpose:
+
+```text
+Terraform State Locking
+```
+
+Example:
+
+```text
+pranik-terraform-state-lock
+```
+
+---
+
+# Backend Deployment
+
+Commands:
+
+```bash
+cd terraform-backend
+
+terraform init
+
+terraform validate
+
+terraform plan
+
+terraform apply
+```
+
+---
+
+# Validation
+
+Verify S3 Bucket:
+
+```bash
+aws s3 ls
+```
+
+Verify DynamoDB Table:
+
+```bash
+aws dynamodb list-tables --region ap-south-1
+```
+
+Expected:
+
+```text
+pranik-terraform-state
+
+pranik-terraform-state-lock
+```
+
+# Remote State Migration
+
+After backend creation, Terraform state was migrated from local storage to S3.
+
+Backend Configuration:
+
+```hcl
+backend "s3" {
+  bucket         = "pranik-terraform-state"
+  key            = "button-roulette/terraform.tfstate"
+  region         = "ap-south-1"
+  dynamodb_table = "pranik-terraform-state-lock"
+}
+```
+
+---
+
+# State Migration
+
+Command:
+
+```bash
+terraform init -reconfigure
+```
+
+Terraform Prompt:
+
+```text
+Do you want to copy existing state to the new backend?
+```
+
+Selected:
+
+```text
+yes
+```
+
+---
+
+# Validation
+
+Verify state location:
+
+```bash
+terraform state list
+```
+
+Expected:
+
+```text
+data.aws_ami.amazon_linux
+aws_instance.terraform_ec2
+aws_security_group.terraform_sg
+```
+
+This confirmed Terraform was reading state from the remote backend.
+
+# EC2 Provisioning Using Terraform
+
+Terraform automatically creates:
+
+```text
+EC2 Instance
+
+Security Group
+
+User Data Configuration
+```
+
+---
+
+# Security Group Rules
+
+Allowed Ports:
+
+| Port | Purpose |
+|--------|----------|
+| 22 | SSH |
+| 80 | HTTP |
+| 443 | HTTPS |
+| 8080 | Spring Boot |
+
+---
+
+# User Data Automation
+
+The EC2 instance automatically installs:
+
+```text
+Docker
+
+Docker Compose
+
+Docker Service Configuration
+```
+
+during first boot.
+
+---
+
+# Provisioning Workflow
+
+```text
+Terraform Apply
+        ↓
+Create Security Group
+        ↓
+Create EC2
+        ↓
+Execute User Data
+        ↓
+Install Docker
+        ↓
+Install Docker Compose
+        ↓
+Server Ready
+```
+
+---
+
+# Validation
+
+Verify User Data Execution:
+
+```bash
+cat /var/log/user-data.log
+```
+
+Expected:
+
+```text
+Docker installed
+
+Docker Compose installed
+
+User Data completed successfully
+```
+
+# Elastic IP Integration
+
+## Problem
+
+Each time EC2 was recreated, AWS assigned a new public IP.
+
+This required updating:
+
+```text
+Jenkins Publish Over SSH
+
+Domain DNS Records
+
+Deployment Configuration
+```
+
+---
+
+# Solution
+
+Terraform now provisions and attaches an Elastic IP.
+
+Resources:
+
+```hcl
+resource "aws_eip" "terraform_eip"
+
+resource "aws_eip_association" "terraform_eip_assoc"
+```
+
+---
+
+# Benefits
+
+```text
+Static Public IP
+
+Stable Jenkins Configuration
+
+Stable DNS Configuration
+
+Production Friendly Infrastructure
+```
+
+---
+
+# Validation
+
+Command:
+
+```bash
+terraform output
+```
+
+Expected:
+
+```text
+ec2_eip_public_ip
+```
+
+The Elastic IP remains constant even if the EC2 instance is recreated.
+
+---
+# ✅ Phase 11 Outcome
+
+Successfully implemented:
+
+```text
+Terraform
+
+Infrastructure As Code
+
+AWS EC2 Provisioning
+
+Security Group Automation
+
+User Data Automation
+
+Remote Terraform State
+
+S3 Backend
+
+DynamoDB State Locking
+
+Elastic IP Management
+
+Infrastructure Recovery Automation
+```
+
+Terraform can now recreate the complete infrastructure consistently using code.
+---
 # 📚 Important Lessons Learned
 
 ## Lesson 1
@@ -4142,6 +4583,11 @@ These are no longer required for normal application access.
 | EC2 Bootstrap Automation    | ✅      |
 | Configuration Management    | ✅      |
 | Nginx Reverse Proxy         | ✅      |
+| GitHub Webhooks             | ✅      |
+| Terraform Backend           | ✅      |
+| Remote State Management     | ✅      |
+| Infrastructure as Code      | ✅      |
+| Elastic IP                  | ✅      |
 
 ---
 # 📖 Key DevOps Learnings
@@ -4249,24 +4695,6 @@ This validated that the deployment process is repeatable and reliable.
 ---
 
 # 🚀 Future Roadmap
-
-## Phase 11 - Infrastructure as Code
-
-Topics:
-
-```text
-Terraform
-
-EC2 Automation
-
-Security Groups
-
-Elastic IP
-
-Remote State
-```
-
----
 
 ## Phase 12 - Configuration Management
 

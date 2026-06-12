@@ -8,7 +8,7 @@ import com.roulette.BaseSpell;
 import com.roulette.model.SpellResponse;
 
 @Component
-public class Pranali extends BaseSpell {
+public class John extends BaseSpell {
 
 	private static final String SINGLE_EMOJI = "😎";
 	private static final String SINGLE_MESSAGE = "Eat 5 Star Do Nothing.";
