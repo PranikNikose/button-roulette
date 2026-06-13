@@ -11,20 +11,20 @@ pipeline {
 		stage('Start Docker If Needed') {
 			steps {
 				powershell '''
-				$service = Get-Service com.docker.service -ErrorAction SilentlyContinue
+				Write-Host "Current Docker service status:"
+				Get-Service com.docker.service
 
-				if ($null -eq $service) {
-					Write-Error "Docker service not found."
-					exit 1
-				}
-
-				if ($service.Status -ne "Running") {
-					Write-Host "Docker is not running. Starting..."
+				if ((Get-Service com.docker.service).Status -ne "Running") {
+					Write-Host "Starting Docker..."
 					Start-Service com.docker.service
-					Start-Sleep -Seconds 15
-				} else {
-					Write-Host "Docker is already running."
 				}
+
+				Start-Sleep -Seconds 30
+
+				Write-Host "Docker service status after start:"
+				Get-Service com.docker.service
+
+				docker version
 				'''
 			}
 		}
