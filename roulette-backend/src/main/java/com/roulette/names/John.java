@@ -1,7 +1,5 @@
 package com.roulette.names;
 
-import java.util.List;
-
 import org.springframework.stereotype.Component;
 
 import com.roulette.BaseSpell;

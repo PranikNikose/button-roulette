@@ -8,6 +8,27 @@ pipeline {
 		
     stages {
 	
+		stage('Start Docker If Needed') {
+			steps {
+				powershell '''
+				$service = Get-Service com.docker.service -ErrorAction SilentlyContinue
+
+				if ($null -eq $service) {
+					Write-Error "Docker service not found."
+					exit 1
+				}
+
+				if ($service.Status -ne "Running") {
+					Write-Host "Docker is not running. Starting..."
+					Start-Service com.docker.service
+					Start-Sleep -Seconds 15
+				} else {
+					Write-Host "Docker is already running."
+				}
+				'''
+			}
+		}
+
 		stage('Environment Check') {
 			steps {
 				bat 'whoami'
