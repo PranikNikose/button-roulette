@@ -1,15 +1,15 @@
 package com.roulette.names;
 
+import java.util.List;
 import org.springframework.stereotype.Component;
-
 import com.roulette.BaseSpell;
 import com.roulette.model.SpellResponse;
 
 @Component
-public class John extends BaseSpell {
+public class Roshan extends BaseSpell {
 
-	private static final String SINGLE_EMOJI = "😎";
-	private static final String SINGLE_MESSAGE = "Eat 5 Star Do Nothing.";
+	private static final String SINGLE_EMOJI = "🤡";
+	private static final String SINGLE_MESSAGE = "All The Best.";
 
 	@Override
 	public SpellResponse cast() {

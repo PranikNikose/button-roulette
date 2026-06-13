@@ -6,10 +6,10 @@ import com.roulette.BaseSpell;
 import com.roulette.model.SpellResponse;
 
 @Component
-public class Diksha extends BaseSpell {
+public class Dipti extends BaseSpell {
 
 	private static final String SINGLE_EMOJI = "👧";
-	private static final String SINGLE_MESSAGE = "Devops Engineer";
+	private static final String SINGLE_MESSAGE = "Happy Sunday!!";
 
 	@Override
 	public SpellResponse cast() {
