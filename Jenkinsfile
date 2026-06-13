@@ -7,27 +7,6 @@ pipeline {
 	}
 		
     stages {
-	
-		stage('Start Docker If Needed') {
-			steps {
-				powershell '''
-				Write-Host "Current Docker service status:"
-				Get-Service com.docker.service
-
-				if ((Get-Service com.docker.service).Status -ne "Running") {
-					Write-Host "Starting Docker..."
-					Start-Service com.docker.service
-				}
-
-				Start-Sleep -Seconds 30
-
-				Write-Host "Docker service status after start:"
-				Get-Service com.docker.service
-
-				docker version
-				'''
-			}
-		}
 
 		stage('Environment Check') {
 			steps {
